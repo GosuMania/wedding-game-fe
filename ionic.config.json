@@ -1,0 +1,7 @@
+{
+  "name": "Wedding Game",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
