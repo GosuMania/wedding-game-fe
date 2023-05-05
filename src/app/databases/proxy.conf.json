@@ -1,0 +1,11 @@
+{
+    "/wedding/*": {
+        "target": "https://wedding-game-be.gosumania.it/api/",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true,
+        "pathRewrite": {
+            "^/wedding": ""
+        }
+    }
+}

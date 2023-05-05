@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title size="large" style="line-height: 1; text-align: center">
+      WEDDING GAME
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="form" *ngIf="loginForm">
+    <form  [formGroup]="loginForm!" (ngSubmit)="onSubmit()">
+      <!-- Login -->
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-input [class]="errors.nome ? 'error' : ''" label="Nome" label-placement="floating" fill="outline" placeholder="Il tuo nome" mode="md"
+                       formControlName="nome"></ion-input>
+
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <div [style.opacity]="errors.nome ? 1 : 0" class="alert-danger">{{errors.nome}}
+            </div>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>
+            <ion-input [class]="errors.cognome ? 'error' : ''" label="Cognome" label-placement="floating" fill="outline" placeholder="Il tuo cognome" mode="md"
+                       formControlName="cognome"></ion-input>
+
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <div [style.opacity]="errors.cognome ? 1 : 0.1" class="alert-danger">{{errors.cognome}}
+            </div>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>
+            <ion-input [class]="errors.nomeUtente ? 'error' : ''" label="Nome utente (SALVATELO)" label-placement="floating" fill="outline" placeholder="Nome utente inventato"
+                       formControlName="nomeUtente" mode="md" maxlength="30"></ion-input>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <div [style.opacity]="errors.nomeUtente ? 1 : 0" class="alert-danger">{{errors.nomeUtente}}
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col style="text-align: center">
+            <ion-button type="submit" [disabled]="!loginForm.valid" mode="ios" style="width: 100%;">
+              Accedi
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </form>
+  </div>
+</ion-content>

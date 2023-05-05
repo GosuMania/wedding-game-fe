@@ -1,0 +1,289 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title size="large" style="line-height: 1; text-align: center">
+      GIOCA E VINCI
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid *ngIf="gameForm && user && user.mission" [formGroup]="gameForm!">
+    <ion-row>
+      <ion-col>
+        <ion-text color="primary">
+          <a routerLink="/about" style="color: #fa9673;display: flex; align-items: center;">
+            <ion-icon name="information-circle" size="large" color="primary"></ion-icon>
+            Leggi il regolamento e scopri cosa si vince
+          </a>
+        </ion-text>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col>
+        <hr>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-grid class="center-custom-item">
+            <ion-row>
+              <ion-col>
+                <ion-icon name="pencil"></ion-icon>
+                Inserisci la soluzione del cruciverba
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-input style="text-transform:uppercase" fill="outline" mode="ios" [counter]="true" maxlength="10"
+                           formControlName="parolaCruciverba"
+                           [disabled]="checkValue(user!.mission!.parolaCruciverba)"></ion-input>
+                <!--
+                <ion-checkbox [disabled]="checkValue(user!.mission!.parolaCruciverba)"
+                              formControlName="parolaCruciverbaCheckBox">
+                  CONFERMA
+                </ion-checkbox>
+                -->
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-button [disabled]="disabledParolaCruciverba" (click)="save(1)" mode="ios"> CONFERMA</ion-button>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <hr>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <ion-grid class="center-custom-item">
+            <ion-row>
+              <ion-col>
+                <ion-icon name="camera"></ion-icon>
+                Scatta un selfie con la sposa e caricalo
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="!checkValue(user!.mission!.selfieSposa)">
+              <ion-col>
+                <ion-button (click)="imageInputSposa.click()" mode="ios"
+                            *ngIf="!selectedFileOnChangeSposa || !checkValue(selectedFileOnChangeSposa?.name)">
+                  Seleziona immagine
+                </ion-button>
+                <ion-button (click)="imageInputSposa.click()" mode="ios"
+                            *ngIf="selectedFileOnChangeSposa && checkValue(selectedFileOnChangeSposa?.name)"> Modifica
+                  immagine
+                </ion-button>
+                <input #imageInputSposa (change)="onFileSelected($event, true)" type="file" accept="image/*"
+                       style="display: none">
+              </ion-col>
+            </ion-row>
+            <ion-row
+              *ngIf="!checkValue(user!.mission!.selfieSposa) && selectedFileSposa && selectedFileSposa!.status === 'fail'">
+              <ion-col>
+                <ion-text class="alert alert-danger">
+                  Caricamento immagine fallito!
+                </ion-text>
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="checkValue(user!.mission!.selfieSposa) || checkValue(previewSelfieSposa)"
+                     style="text-align: -webkit-center;">
+              <ion-col>
+                <div *ngIf="checkValue(user!.mission!.selfieSposa)" class='image-product'>
+                  <img class="image-product-item" [src]="user!.mission!.selfieSposa"/>
+                </div>
+                <div *ngIf="checkValue(previewSelfieSposa)" class='image-product'>
+                  <img class="image-product-item" [src]="previewSelfieSposa"/>
+                </div>
+                <ion-button mode="ios"
+                  *ngIf="previewSelfieSposa && (!user || !user.mission || !checkValue(user.mission.selfieSposa))"
+                  (click)="save(2)">
+                  CARICA LA FOTO
+                </ion-button>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <hr>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <ion-grid class="center-custom-item">
+            <ion-row>
+              <ion-col>
+                <ion-icon name="camera"></ion-icon>
+                Scatta un selfie con lo sposo e caricalo
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="!checkValue(user!.mission!.selfieSposo)">
+              <ion-col>
+                <ion-button (click)="imageInputSposo.click()" mode="ios"
+                            *ngIf="!selectedFileOnChangeSposo || !checkValue(selectedFileOnChangeSposo?.name)">
+                  Seleziona immagine
+                </ion-button>
+                <ion-button (click)="imageInputSposo.click()" mode="ios"
+                            *ngIf="selectedFileOnChangeSposo && checkValue(selectedFileOnChangeSposo?.name)"> Modifica
+                  immagine
+                </ion-button>
+                <input #imageInputSposo (change)="onFileSelected($event, false)" type="file" accept="image/*"
+                       style="display: none">
+              </ion-col>
+            </ion-row>
+            <ion-row
+              *ngIf="!checkValue(user!.mission!.selfieSposo) && selectedFileSposo && selectedFileSposo!.status === 'fail'">
+              <ion-col>
+                <ion-text class="alert alert-danger">
+                  Caricamento immagine fallito!
+                </ion-text>
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="checkValue(user!.mission!.selfieSposo) || checkValue(previewSelfieSposo)"
+                     style="text-align: -webkit-center;">
+              <ion-col>
+                <div *ngIf="checkValue(user!.mission!.selfieSposo)" class='image-product'>
+                  <img class="image-product-item" [src]="user!.mission!.selfieSposo"/>
+                </div>
+                <div *ngIf="checkValue(previewSelfieSposo)" class='image-product'>
+                  <img class="image-product-item" [src]="previewSelfieSposo"/>
+                </div>
+                <ion-button mode="ios"
+                  *ngIf="previewSelfieSposo && (!user || !user.mission || !checkValue(user.mission.selfieSposo))"
+                  (click)="save(3)">
+                  CARICA LA FOTO
+                </ion-button>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <hr>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <ion-grid class="center-custom-item">
+            <ion-row>
+              <ion-col>
+                <ion-icon name="wine"></ion-icon>
+                Registra un breve video mentre fai un brindisi e caricalo qui
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="!checkValue(user!.mission!.videoBrindisi)">
+              <ion-col>
+                <ion-button (click)="videoBrindisi.click()" mode="ios"
+                            *ngIf="!selectedFileOnChangeVideo || !checkValue(selectedFileOnChangeVideo?.name)">
+                  Seleziona video
+                </ion-button>
+                <ion-button (click)="videoBrindisi.click()" mode="ios"
+                            *ngIf="selectedFileOnChangeVideo && checkValue(selectedFileOnChangeVideo?.name)">
+                  Modifica video
+                </ion-button>
+                <input #videoBrindisi (change)="onFileSelectedVideo($event)" type="file" accept="video/*"
+                       style="display: none">
+              </ion-col>
+            </ion-row>
+            <ion-row
+              *ngIf="!checkValue(user!.mission!.videoBrindisi) && selectedFileVideo && selectedFileVideo!.status === 'fail'">
+              <ion-col>
+                <ion-text class="alert alert-danger">
+                  Caricamento video fallito!
+                </ion-text>
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="checkValue(user!.mission!.videoBrindisi) || checkValue(previewVideoBrindisi)"
+                     style="text-align: -webkit-center;">
+              <ion-col>
+                <div *ngIf="checkValue(user!.mission!.videoBrindisi)" class='video'>
+                  <video class="video-item" controls>
+                    <source [src]="user!.mission!.videoBrindisi">
+                  </video>
+                </div>
+                <div *ngIf="checkValue(previewVideoBrindisi)" class='video'>
+                  <video class="video-item" controls>
+                    <source [src]="previewVideoBrindisi">
+                  </video>
+                </div>
+                <ion-button mode="ios"
+                  *ngIf="previewVideoBrindisi && (!user || !user.mission || !checkValue(user.mission.videoBrindisi))"
+                  (click)="save(4)">
+                  CARICA IL VIDEO
+                </ion-button>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <hr>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <ion-grid class="center-custom-item">
+            <ion-row>
+              <ion-col>
+                <ion-icon name="pencil"></ion-icon>
+                Inserisci la parola segreta che trovi sotto al 1° mattoncino centrale del Jenga
+                senza farlo cadere, ricorda di rimetterlo dove l'hai trovato.
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-input style="text-transform:uppercase" fill="outline" mode="ios" maxlength="30"
+                           formControlName="parolaJenga"
+                           [disabled]="checkValue(user!.mission!.parolaJenga)"></ion-input>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-button [disabled]="disabledParolaJenga" (click)="save(5)" mode="ios"> CONFERMA</ion-button>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <hr>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <ion-grid class="center-custom-item">
+            <ion-row>
+              <ion-col>
+                <ion-icon name="pencil"></ion-icon>
+                Risolvi l'indovinello: Si può giocare in 2, ma a squadre è più divertente, il Jolly e il 2 ti fanno
+                gioire
+                ma se li usi male uno pulito non puoi fare. Cos'è?
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col style="display: flex; align-items: center; justify-content: center">
+                <ion-input style="text-transform:uppercase" fill="outline" mode="ios" maxlength="30"
+                           formControlName="indovinello"
+                           [disabled]="checkValue(user!.mission!.indovinello)"></ion-input>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-button [disabled]="disabledIndovinello" (click)="save(6)" mode="ios"> CONFERMA</ion-button>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <hr>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-alert
+    #presentAlert
+    mode="ios"
+    header="Importante!"
+    message="Una volta confermato non potrai più modificare la tua risposta o immagine o video."
+    [buttons]="alertButtons"
+  ></ion-alert>
+</ion-content>
