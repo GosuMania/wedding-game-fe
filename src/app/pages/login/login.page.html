@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title size="large" style="line-height: 1; text-align: center">
+    <ion-title mode="ios" size="large" style="line-height: 1; text-align: center">
       WEDDING GAME
     </ion-title>
   </ion-toolbar>
@@ -8,12 +8,37 @@
 
 <ion-content>
   <div class="form" *ngIf="loginForm">
-    <form  [formGroup]="loginForm!" (ngSubmit)="onSubmit()">
+    <form [formGroup]="loginForm!" (ngSubmit)="onSubmit()">
       <!-- Login -->
       <ion-grid>
         <ion-row>
           <ion-col>
-            <ion-input [class]="errors.nome ? 'error' : ''" label="Nome" label-placement="floating" fill="outline" placeholder="Il tuo nome" mode="md"
+            <h1>Eccoti nel nostro gioco</h1>
+            <p>Complimenti per essere arrivato fin qui. Abbiamo pensato per te ad una sfida!
+              Avrai poche missioni da compiere, ma velocità e scaltrezza saranno le carte vincenti che ti
+              permetteranno di vincere.
+              Solo tre di voi saranno premiati. Hai tempo fino alle {{time}}, non ci resta che dirti grazie e… che vinca
+              il migliore!
+            </p>
+            <h2>
+              Cosa si vince?
+            </h2>
+            <p>
+              1° Posto: Buono Amazon del valore di 50€ <br>
+              2° Posto: Gioco da tavola <br>
+              3° Posto: Gratta e Vinci di 10€
+            </p>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <h1>Accedi</h1>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-input [class]="errors.nome ? 'error' : ''" label="Nome" label-placement="floating" fill="outline"
+                       placeholder="Il tuo nome" mode="md"
                        formControlName="nome"></ion-input>
 
           </ion-col>
@@ -24,10 +49,10 @@
             </div>
           </ion-col>
         </ion-row>
-
         <ion-row>
           <ion-col>
-            <ion-input [class]="errors.cognome ? 'error' : ''" label="Cognome" label-placement="floating" fill="outline" placeholder="Il tuo cognome" mode="md"
+            <ion-input [class]="errors.cognome ? 'error' : ''" label="Cognome" label-placement="floating" fill="outline"
+                       placeholder="Il tuo cognome" mode="md"
                        formControlName="cognome"></ion-input>
 
           </ion-col>
@@ -38,10 +63,10 @@
             </div>
           </ion-col>
         </ion-row>
-
         <ion-row>
           <ion-col>
-            <ion-input [class]="errors.nomeUtente ? 'error' : ''" label="Nome utente (SALVATELO)" label-placement="floating" fill="outline" placeholder="Nome utente inventato"
+            <ion-input [class]="errors.nomeUtente ? 'error' : ''" label="Nome utente (RICORDALO)"
+                       label-placement="floating" fill="outline" placeholder="Nome utente inventato"
                        formControlName="nomeUtente" mode="md" maxlength="30"></ion-input>
           </ion-col>
         </ion-row>
@@ -58,7 +83,16 @@
             </ion-button>
           </ion-col>
         </ion-row>
+        <ion-row>
+          <ion-col>
+            <div [style.opacity]="errors.accedi ? 1 : 0" class="alert-danger">{{errors.accedi}}
+            </div>
+          </ion-col>
+        </ion-row>
       </ion-grid>
+
     </form>
   </div>
+  <br>
+  <br>
 </ion-content>

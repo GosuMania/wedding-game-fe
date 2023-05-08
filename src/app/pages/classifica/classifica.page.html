@@ -1,15 +1,60 @@
 <ion-header>
-  <ion-toolbar color="primary">
-    <ion-title size="large" style="line-height: 1; text-align: center">
-      CLASSIFICA
-    </ion-title>
+  <ion-toolbar color="primary" style="padding-left: 1rem">
+    <ion-row>
+      <ion-col size="1">
+        <ion-buttons>
+          <ion-back-button mode="ios" defaultHref="/home" text="" icon="arrow-back-outline"
+                           style="color:#ffffff;"></ion-back-button>
+        </ion-buttons>
+      </ion-col>
+      <ion-col size="11" style="display: flex; align-items: center;">
+        <ion-title mode="ios" size="large" style="line-height: 1; text-align: center; translate: -5%">
+          CLASSIFICA
+        </ion-title>
+      </ion-col>
+    </ion-row>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
- <ion-list>
-   <ion-item *ngFor="let user of classifica; let i = index" (click)="goDetail(user)">
-     {{i + 1}}) {{user.nomeUtente}} [{{user.punteggio}}] - [{{user!.mission!.date | date: 'HH:mm:ss'}}]
-   </ion-item>
- </ion-list>
+  <ion-list>
+    <ion-item *ngFor="let user of classifica; let i = index" (click)="goDetail(user)">
+      <ion-row *ngIf="i === 0"
+               style="background: gold; width: 100%; height: 100%; display: flex; align-items: center; padding: 2%;">
+        <ion-col size="2">
+          #{{i + 1}}
+        </ion-col>
+        <ion-col size="10">
+          {{user.nomeUtente}}
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="i === 1"
+               style="background: silver; width: 100%; height: 100%; display: flex; align-items: center; padding: 2%;">
+        <ion-col size="2">
+          #{{i + 1}}
+        </ion-col>
+        <ion-col size="10">
+          {{user.nomeUtente}}
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="i === 2"
+               style="background: #b08d57; width: 100%; height: 100%; display: flex; align-items: center; padding: 2%;">
+        <ion-col size="2">
+          #{{i + 1}}
+        </ion-col>
+        <ion-col size="10">
+          {{user.nomeUtente}}
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="i > 2"
+               style="width: 100%; height: 100%; display: flex; align-items: center; padding: 2%;">
+        <ion-col size="2">
+          #{{i + 1}}
+        </ion-col>
+        <ion-col size="10">
+          {{user.nomeUtente}}
+        </ion-col>
+      </ion-row>
+    </ion-item>
+  </ion-list>
 </ion-content>

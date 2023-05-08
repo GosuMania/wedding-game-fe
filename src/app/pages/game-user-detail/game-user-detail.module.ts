@@ -16,6 +16,6 @@ import { GameUserDetailPage } from './game-user-detail.page';
     GameUserDetailPageRoutingModule,
     ReactiveFormsModule
   ],
-  declarations: [GameUserDetailPage]
+  declarations: [GameUserDetailPage],
 })
 export class GameUserDetailPageModule {}

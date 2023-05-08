@@ -1,0 +1,10 @@
+<ion-content scroll-y="false">
+  <swiper-container pagination="true" pagination-type="fraction">
+    <swiper-slide *ngFor="let image of images;">
+      <div>
+        <ion-img [src]="image" [style.height]="heightPlatform + 'px !important'"
+                 [style.max-width]="widthPlatform + 'px !important'"></ion-img>
+      </div>
+    </swiper-slide>
+  </swiper-container>
+</ion-content>

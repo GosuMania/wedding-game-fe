@@ -35,14 +35,27 @@ ion-checkbox::part(container) {
   --bs-alert-bg: #f8d7da;
   --bs-alert-border-color: #f5c2c7;
 }
-.alert-danger .alert-link {
-  color: #6a1a21;
+.alert-danger {
+  color: #eb445a;
 }
 
+
 .image-product-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+.image-product-item::part(image) {
+  border-radius: 15px !important;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  background: white;
   object-fit: cover;
-  max-width: 148px !important;
-  max-height: 148px !important;
 }
 
 .button-x {
@@ -63,8 +76,8 @@ ion-checkbox::part(container) {
   aspect-ratio: 1;
   background: white;
   object-fit: cover;
-  width: 200px !important;
-  height: 200px !important;
+  width: 250px !important;
+  height: 250px !important;
   position: relative;
 }
 
@@ -79,12 +92,30 @@ ion-checkbox::part(container) {
   aspect-ratio: 1;
   background: white;
   object-fit: cover;
-  width: 200px !important;
+  width: 250px !important;
   height: auto !important;
   position: relative;
 }
 
 .video-item {
-  max-width: 188px !important;
+  max-width: 230px !important;
   height: auto !important;
+}
+
+.custom-input {
+  --border-color: red;
+  --bordr-style: solid 5px;
+}
+
+
+
+.centerFullImage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+  margin: auto;
+  width: 90%;
 }

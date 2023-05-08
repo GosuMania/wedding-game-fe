@@ -14,6 +14,9 @@ export const environment = {
   MISSION_DELETE: 'mission/delete',
 
   IMAGE_UPLOAD: 'image/upload',
-  IMAGE_UPLOAD_VIDEO: 'image/upload-video'
+  IMAGE_UPLOAD_VIDEO: 'image/upload-video',
+  IMAGE_GET_ALL: 'image/get-all',
+
+  TIME_GET_TIME: 'time/get-time'
 
 };

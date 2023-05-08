@@ -5,13 +5,14 @@ import {UserService} from "../../services/user.service";
 import {IUser} from "../../interfaces/IUser";
 import {StorageService} from "../../services/storage.service";
 import {SpinnerService} from "../../services/spinner.service";
-import * as moment from 'moment';
-import 'moment-timezone';
+import * as dayjs from 'dayjs';
+
 
 class IError {
   nome: any;
   cognome: any;
   nomeUtente: any;
+  accedi: any
 }
 
 @Component({
@@ -24,10 +25,13 @@ export class LoginPage implements OnInit {
   errors: IError = {
     nome: null,
     cognome: null,
-    nomeUtente: null
+    nomeUtente: null,
+    accedi: null
   };
   regex: RegExp = new RegExp("^[a-zA-Z0-9 '_.-]*$")
   regexNC: RegExp = new RegExp("^[a-zA-Z ']*$")
+
+  time: string = '21:00';
 
   constructor(
     public router: Router,
@@ -49,6 +53,10 @@ export class LoginPage implements OnInit {
       ]))
     });
 
+    this.us.time.subscribe(value => {
+      this.time = dayjs(value.date, 'YYYY-MM-DD HH:mm:ss').format('HH:mm');
+    });
+
     this.onChanges()
   }
 
@@ -56,6 +64,8 @@ export class LoginPage implements OnInit {
   }
 
   onChanges() {
+    this.errors.accedi = null;
+
     this.loginForm.get('nome')!.valueChanges.subscribe(value => {
       this.errors.nome = null;
     })
@@ -84,7 +94,9 @@ export class LoginPage implements OnInit {
       this.us.login(user).subscribe((res: IUser) => {
         this.us.user.next(res);
         this.storage.set('user', res);
-        if (+moment().tz('Europe/Berlin').format('HH') < 5) {
+        const timeMoment = dayjs(this.us.time.getValue().date, 'YYYY-MM-DD HH:mm:ss').get("hours");
+        const timeMomentNow =  dayjs(dayjs().locale('it').format('YYYY-MM-DD HH:mm:ss'), 'YYYY-MM-DD HH:mm:ss').get("hours");
+        if (+timeMomentNow < +timeMoment) {
           this.router.navigate(['/game']).then(() => {
             setTimeout(() => {
               this.spinnerService.requestEnded();
@@ -92,12 +104,18 @@ export class LoginPage implements OnInit {
           });
         } else {
           setTimeout(() => {
-            this.router.navigate(['/classifica']).then(() => {
+            this.router.navigate(['/home']).then(() => {
               setTimeout(() => {
                 this.spinnerService.requestEnded();
               }, 500);
             });
           }, 1000);
+        }
+      }, error => {
+        if(error.error.message.includes('Duplicate')) {
+          console.log('Nome utente duplicato');
+          this.errors.accedi = 'Oops! Il nome utente da te scelto è già stato usato, per favore cambialo!'
+          this.spinnerService.requestEnded();
         }
       });
 

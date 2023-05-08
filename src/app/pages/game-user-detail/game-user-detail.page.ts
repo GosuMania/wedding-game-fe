@@ -7,7 +7,6 @@ import {IMission} from "../../interfaces/IMission";
 import {SpinnerService} from "../../services/spinner.service";
 import {DomSanitizer} from "@angular/platform-browser";
 import {IonAlert} from "@ionic/angular";
-import * as moment from "moment/moment";
 import {Router} from "@angular/router";
 
 class ImageSnippet {
@@ -60,6 +59,7 @@ export class GameUserDetailPage implements OnInit, OnDestroy {
       },
     },
   ];
+  showImageFullScreen: string | null = null;
 
   constructor(private us: UserService, private gs: GameService, public fb: UntypedFormBuilder, private spinnerService: SpinnerService,
               private sanitizer: DomSanitizer, private cdkRef: ChangeDetectorRef, public router: Router) {
@@ -349,4 +349,7 @@ export class GameUserDetailPage implements OnInit, OnDestroy {
 
   }
 
+  zoomImage(image: string | null) {
+    this.showImageFullScreen = image;
+  }
 }

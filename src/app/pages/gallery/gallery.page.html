@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar color="primary" style="padding-left: 1rem">
+    <ion-row>
+      <ion-col size="1">
+        <ion-buttons>
+          <ion-back-button mode="ios" defaultHref="/home" text="" icon="arrow-back-outline"
+                           style="color:#ffffff;"></ion-back-button>
+        </ion-buttons>
+      </ion-col>
+      <ion-col size="10" style="display: flex; align-items: center">
+        <ion-title mode="ios" size="large" style="line-height: 1; text-align: center; translate: -5%">
+          GALLERIA
+        </ion-title>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content scroll-y="false" >
+  <ion-segment mode="ios" color="primary" [value]="select" (ionChange)="segmentChanged($event)">
+    <ion-segment-button mode="ios" value="image" (click)="changeSlide('image')">
+      <ion-label>Foto</ion-label>
+    </ion-segment-button>
+    <ion-segment-button mode="ios" value="video" (click)="changeSlide('video')">
+      <ion-label>Video</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <app-images [hidden]="select !== 'image'" [images]="images" [widthPlatform]="widthPlatform" [heightPlatform]="heightPlatform">
+  </app-images>
+
+  <app-videos [hidden]="select !== 'video'" [videos]="videos" [widthPlatform]="widthPlatform" [heightPlatform]="heightPlatform">
+  </app-videos>
+</ion-content>

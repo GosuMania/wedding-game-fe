@@ -1,0 +1,11 @@
+<ion-content scroll-y="false">
+  <swiper-container pagination="true" pagination-type="fraction">
+    <swiper-slide *ngFor="let video of videoToShow">
+      <div>
+        <video controls [style.height]="heightPlatform + 'px !important'" [style.width]="widthPlatform + 'px !important'">
+          <source [src]="video">
+        </video>
+      </div>
+    </swiper-slide>
+  </swiper-container>
+</ion-content>

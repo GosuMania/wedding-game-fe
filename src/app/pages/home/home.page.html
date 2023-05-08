@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar color="primary" style="padding-left: 1rem">
+    <ion-title mode="ios" size="large" style="line-height: 1; text-align: center">
+      HOME
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid style="padding: 2rem">
+    <ion-row>
+      <p>
+        Spero ti sia divertito a giocare, controlla la classifica o sfoglia
+        tutte le foto e video scattate per partecipare!
+      </p>
+
+    </ion-row>
+  </ion-grid>
+  <ion-grid class="centercenter">
+    <div>
+      <ion-row>
+        <ion-col style="text-align: center">
+          <ion-button mode="ios" style="width: 100%;" (click)="goNavitation('/classifica')">
+            CLASSIFICA
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <br>
+      <br>
+      <ion-row>
+        <ion-col style="text-align: center">
+          <ion-button mode="ios" style="width: 100%;" (click)="goNavitation('/gallery')">
+            GALLERIA
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </div>
+  </ion-grid>
+</ion-content>

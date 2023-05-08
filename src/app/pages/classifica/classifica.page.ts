@@ -15,8 +15,17 @@ export class ClassificaPage implements OnInit {
   classifica: IUser[] = [];
 
   constructor(private gs: GameService, private us: UserService, public router: Router, private spinnerService: SpinnerService) {
-    this.us.getUserList().subscribe(users => {
-      this.classifica = users as IUser[];
+    this.spinnerService.requestStartedApi();
+    this.us.userList.subscribe(users => {
+      if(users !== null && users.length > 0) {
+        this.classifica = users as IUser[];
+        this.spinnerService.requestEndedApi();
+      } else {
+        this.us.getUserList().subscribe(users => {
+          this.classifica = users as IUser[];
+          this.spinnerService.requestEndedApi();
+        });
+      }
     });
   }
 

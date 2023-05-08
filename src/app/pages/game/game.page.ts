@@ -7,7 +7,6 @@ import {IMission} from "../../interfaces/IMission";
 import {SpinnerService} from "../../services/spinner.service";
 import {DomSanitizer} from "@angular/platform-browser";
 import {IonAlert} from "@ionic/angular";
-import * as moment from "moment/moment";
 
 class ImageSnippet {
   pending = false;
@@ -15,6 +14,13 @@ class ImageSnippet {
 
   constructor(public src?: string, public file?: File) {
   }
+}
+
+class IError {
+  selfieSposo: any;
+  selfieSposa: any;
+  videoBrindisi: any;
+  salvataggio: any
 }
 
 @Component({
@@ -26,7 +32,15 @@ export class GamePage implements OnInit {
   @ViewChild('imageInputSposa') imageInputSposa: ElementRef<HTMLInputElement> = {} as ElementRef;
   @ViewChild('imageInputSposo') imageInputSposo: ElementRef<HTMLInputElement> = {} as ElementRef;
   @ViewChild('videoBrindisi') videoBrindisi: ElementRef<HTMLInputElement> = {} as ElementRef;
+  @ViewChild('video') video: ElementRef<HTMLInputElement> = {} as ElementRef;
   @ViewChild('presentAlert') presentAlert: IonAlert = {} as IonAlert;
+
+  errors: IError = {
+    selfieSposo: null,
+    selfieSposa: null,
+    videoBrindisi: null,
+    salvataggio: null
+  };
 
   cruciverba: string = '';
   user?: IUser;
@@ -40,6 +54,7 @@ export class GamePage implements OnInit {
   selectedFileSposo: ImageSnippet = new ImageSnippet();
   selectedFileOnChangeVideo: any;
   selectedFileVideo: ImageSnippet = new ImageSnippet();
+  videoDuration: number = 0;
 
   previewSelfieSposa: any;
   previewSelfieSposo: any;
@@ -59,6 +74,7 @@ export class GamePage implements OnInit {
       },
     },
   ];
+  showImageFullScreen: string | null = null;
 
   constructor(private us: UserService, private gs: GameService, public fb: UntypedFormBuilder, private spinnerService: SpinnerService,
               private sanitizer: DomSanitizer, private cdkRef: ChangeDetectorRef) {
@@ -68,16 +84,16 @@ export class GamePage implements OnInit {
         this.gameForm = this.fb.group({
           parolaCruciverba: [{
             value: this.user.mission?.parolaCruciverba,
-            disabled: this.checkValue(this.user.mission?.parolaCruciverba)
+            disabled: this.checkValue(this.user.mission?.parolaCruciverba),
           }],
           brindisi: [{value: this.user.mission?.brindisi, disabled: this.user.mission?.brindisi}],
           parolaJenga: [{
             value: this.user.mission?.parolaJenga,
-            disabled: this.checkValue(this.user.mission?.parolaJenga)
+            disabled: this.checkValue(this.user.mission?.parolaJenga),
           }],
           indovinello: [{
             value: this.user.mission?.indovinello,
-            disabled: this.checkValue(this.user.mission?.indovinello)
+            disabled: this.checkValue(this.user.mission?.indovinello),
           }],
         });
         this.onChanges();
@@ -162,12 +178,18 @@ export class GamePage implements OnInit {
               this.processFileVideo();
               break;
             case 5:
-              missione!.parolaJenga = this.gameForm.get('parolaJenga')!.value.toString().toLowerCase();
-              this.disabledParolaJenga = true;
-              this.gs.createOrUpdate(missione).subscribe(res => {
-                this.us.user.next(res);
+              try {
+                missione!.parolaJenga = this.gameForm.get('parolaJenga')!.value.toString().toLowerCase();
+                this.disabledParolaJenga = true;
+                this.gs.createOrUpdate(missione).subscribe(res => {
+                  this.us.user.next(res);
+                  this.spinnerService.requestEndedApi();
+                });
+              } catch (e) {
+                missione!.parolaJenga = '';
+                this.gameForm.get('parolaJenga')!.setValue('');
                 this.spinnerService.requestEndedApi();
-              });
+              }
               break;
             case 6:
               missione!.indovinello = this.gameForm.get('indovinello')!.value.toString().toLowerCase();
@@ -187,44 +209,62 @@ export class GamePage implements OnInit {
   }
 
   onFileSelected(event: any, isSposa: boolean): void {
-    if (event.target.files[0]) {
-      if (isSposa) {
-        this.selectedFileOnChangeSposa = event.target.files[0]
-        this.previewSelfieSposa = this.sanitizer.bypassSecurityTrustUrl(
-          window.URL.createObjectURL(event.target.files[0])
-        );
-        this.user!.mission!.selfieSposa = null;
+    try {
+      if (event.target.files[0]) {
+        if (isSposa) {
+          this.selectedFileOnChangeSposa = event.target.files[0]
+          this.previewSelfieSposa = window.URL.createObjectURL(event.target.files[0]);
+          /*
+          this.previewSelfieSposa = this.sanitizer.bypassSecurityTrustUrl(
+            window.URL.createObjectURL(event.target.files[0])
+          );
+
+           */
+          this.user!.mission!.selfieSposa = null;
+        } else {
+          this.selectedFileOnChangeSposo = event.target.files[0];
+          this.previewSelfieSposo = window.URL.createObjectURL(event.target.files[0]);
+          /*
+          this.previewSelfieSposo = this.sanitizer.bypassSecurityTrustUrl(
+            window.URL.createObjectURL(event.target.files[0])
+          );
+           */
+          this.user!.mission!.selfieSposo = null;
+        }
       } else {
-        this.selectedFileOnChangeSposo = event.target.files[0]
-        this.previewSelfieSposo = this.sanitizer.bypassSecurityTrustUrl(
-          window.URL.createObjectURL(event.target.files[0])
-        );
-        this.user!.mission!.selfieSposo = null;
+        if (isSposa) {
+          this.selectedFileOnChangeSposa = null;
+        } else {
+          this.selectedFileOnChangeSposo = null;
+        }
       }
-    } else {
-      if (isSposa) {
-        this.selectedFileOnChangeSposa = null;
-      } else {
-        this.selectedFileOnChangeSposo = null;
-      }
+    } catch (e) {
+
     }
+
   }
 
   onFileSelectedVideo(event: any): void {
-    if (event.target.files[0]) {
-      this.selectedFileOnChangeVideo = null;
-      this.previewVideoBrindisi = null;
-      setTimeout(() => {
-        this.selectedFileOnChangeVideo = event.target.files[0]
-        this.previewVideoBrindisi = this.sanitizer.bypassSecurityTrustUrl(
-          window.URL.createObjectURL(event.target.files[0])
-        );
-        this.user!.mission!.videoBrindisi = null;
-        this.cdkRef.detectChanges();
-      },300);
-    } else {
-      this.selectedFileOnChangeVideo = null;
+    this.errors.videoBrindisi = null;
+    try {
+      if (event.target.files[0]) {
+        this.selectedFileOnChangeVideo = null;
+        this.previewVideoBrindisi = null;
+        setTimeout(() => {
+          this.selectedFileOnChangeVideo = event.target.files[0]
+          this.previewVideoBrindisi = this.sanitizer.bypassSecurityTrustUrl(
+            window.URL.createObjectURL(event.target.files[0])
+          );
+          this.user!.mission!.videoBrindisi = null;
+          this.cdkRef.detectChanges();
+        }, 300);
+      } else {
+        this.selectedFileOnChangeVideo = null;
+      }
+    } catch (e) {
+
     }
+
   }
 
   clearImage(isSposa: boolean) {
@@ -236,112 +276,142 @@ export class GamePage implements OnInit {
   }
 
   processFileSposa() {
-    const file: File = this.imageInputSposa!.nativeElement!.files![0];
-    if (file) {
-      const reader = new FileReader();
-      reader.addEventListener('load', (event: any) => {
-        this.selectedFileSposa = new ImageSnippet(event.target.result, file);
-        this.selectedFileSposa.pending = true;
-        if (this.selectedFileSposa != null) {
-          this.gs.uploadImage(this.selectedFileSposa.file).subscribe(
-            (imageLink: string) => {
-              console.log(imageLink);
-              let missione = this.user!.mission as IMission;
-              missione!.idUtente = this.user!.id;
-              missione!.selfieSposa = imageLink;
-              this.gs.createOrUpdate(missione).subscribe(res => {
-                this.previewSelfieSposa = null;
-                this.us.user.next(res);
-                this.spinnerService.requestEndedApi();
+    try {
+      const file: File = this.imageInputSposa!.nativeElement!.files![0];
+      if (file) {
+        const reader = new FileReader();
+        reader.addEventListener('load', (event: any) => {
+          this.selectedFileSposa = new ImageSnippet(event.target.result, file);
+          this.selectedFileSposa.pending = true;
+          if (this.selectedFileSposa != null) {
+            this.gs.uploadImage(this.selectedFileSposa.file).subscribe(
+              (imageLink: string) => {
+                console.log(imageLink);
+                let missione = this.user!.mission as IMission;
+                missione!.idUtente = this.user!.id;
+                missione!.selfieSposa = imageLink;
+                this.gs.createOrUpdate(missione).subscribe(res => {
+                  this.previewSelfieSposa = null;
+                  this.us.user.next(res);
+                  this.spinnerService.requestEndedApi();
+                });
+              },
+              () => {
               });
-            },
-            () => {
-            });
-        }
-      });
-      reader.readAsDataURL(file);
-    } else {
-      let missione = this.user!.mission as IMission;
-      missione!.idUtente = this.user!.id;
-      this.gs.createOrUpdate(missione).subscribe(res => {
-        this.us.user.next(res);
-        this.spinnerService.requestEndedApi();
-      });
+          }
+        });
+        reader.readAsDataURL(file);
+      } else {
+        let missione = this.user!.mission as IMission;
+        missione!.idUtente = this.user!.id;
+        this.gs.createOrUpdate(missione).subscribe(res => {
+          this.us.user.next(res);
+          this.spinnerService.requestEndedApi();
+        });
+      }
+    } catch (e) {
+      this.spinnerService.requestEndedApi();
     }
-
   }
 
   processFileSposo() {
-    const file: File = this.imageInputSposo!.nativeElement!.files![0];
-    if (file) {
-      const reader = new FileReader();
-      reader.addEventListener('load', (event: any) => {
-        this.selectedFileSposo = new ImageSnippet(event.target.result, file);
-        this.selectedFileSposo.pending = true;
-        if (this.selectedFileSposo != null) {
-          this.gs.uploadImage(this.selectedFileSposo.file).subscribe(
-            (imageLink: string) => {
-              console.log(imageLink);
-              let missione = this.user!.mission as IMission;
-              missione!.idUtente = this.user!.id;
-              missione!.selfieSposo = imageLink;
-              this.gs.createOrUpdate(missione).subscribe(res => {
-                this.previewSelfieSposo = null;
-                this.us.user.next(res);
-                this.spinnerService.requestEndedApi();
+    try {
+      const file: File = this.imageInputSposo!.nativeElement!.files![0];
+      if (file) {
+        const reader = new FileReader();
+        reader.addEventListener('load', (event: any) => {
+          this.selectedFileSposo = new ImageSnippet(event.target.result, file);
+          this.selectedFileSposo.pending = true;
+          if (this.selectedFileSposo != null) {
+            this.gs.uploadImage(this.selectedFileSposo.file).subscribe(
+              (imageLink: string) => {
+                console.log(imageLink);
+                let missione = this.user!.mission as IMission;
+                missione!.idUtente = this.user!.id;
+                missione!.selfieSposo = imageLink;
+                this.gs.createOrUpdate(missione).subscribe(res => {
+                  this.previewSelfieSposo = null;
+                  this.us.user.next(res);
+                  this.spinnerService.requestEndedApi();
+                });
+              },
+              () => {
               });
-            },
-            () => {
-            });
-        }
-      });
-      reader.readAsDataURL(file);
-    } else {
-      let missione = this.user!.mission as IMission;
-      missione!.idUtente = this.user!.id;
-      this.gs.createOrUpdate(missione).subscribe(res => {
-        this.us.user.next(res);
-        this.spinnerService.requestEndedApi();
-      });
+          }
+        });
+        reader.readAsDataURL(file);
+      } else {
+        let missione = this.user!.mission as IMission;
+        missione!.idUtente = this.user!.id;
+        this.gs.createOrUpdate(missione).subscribe(res => {
+          this.us.user.next(res);
+          this.spinnerService.requestEndedApi();
+        });
+      }
+    } catch (e) {
+      this.spinnerService.requestEndedApi();
     }
-
   }
 
   processFileVideo() {
-    const file: File = this.videoBrindisi!.nativeElement!.files![0];
-    if (file) {
-      const reader = new FileReader();
-      reader.addEventListener('load', (event: any) => {
-        this.selectedFileVideo = new ImageSnippet(event.target.result, file);
-        this.selectedFileVideo.pending = true;
-        if (this.selectedFileVideo != null) {
-          this.gs.uploadImage(this.selectedFileVideo.file).subscribe(
-            (videoLink: string) => {
-              console.log(videoLink);
-              let missione = this.user!.mission as IMission;
-              missione!.idUtente = this.user!.id;
-              missione!.videoBrindisi = videoLink;
-              missione!.brindisi = true;
-              this.gs.createOrUpdate(missione).subscribe(res => {
-                this.previewVideoBrindisi = null;
-                this.us.user.next(res);
-                this.spinnerService.requestEndedApi();
-              });
-            },
-            () => {
-            });
+    try {
+      const file: File = this.videoBrindisi!.nativeElement!.files![0];
+      if(this.videoDuration < 31) {
+        if (file) {
+          const reader = new FileReader();
+          reader.addEventListener('load', (event: any) => {
+            this.selectedFileVideo = new ImageSnippet(event.target.result, file);
+            this.selectedFileVideo.pending = true;
+            if (this.selectedFileVideo != null) {
+              this.gs.uploadImage(this.selectedFileVideo.file).subscribe(
+                (videoLink: string) => {
+                  console.log(videoLink);
+                  let missione = this.user!.mission as IMission;
+                  missione!.idUtente = this.user!.id;
+                  missione!.videoBrindisi = videoLink;
+                  missione!.brindisi = true;
+                  this.gs.createOrUpdate(missione).subscribe(res => {
+                    this.previewVideoBrindisi = null;
+                    this.us.user.next(res);
+                    this.spinnerService.requestEndedApi();
+                  });
+                },
+                () => {
+                });
+            }
+          });
+          reader.readAsDataURL(file);
+        } else {
+          let missione = this.user!.mission as IMission;
+          missione!.idUtente = this.user!.id;
+          this.gs.createOrUpdate(missione).subscribe(res => {
+            this.us.user.next(res);
+            this.spinnerService.requestEndedApi();
+          });
         }
-      });
-      reader.readAsDataURL(file);
-    } else {
-      let missione = this.user!.mission as IMission;
-      missione!.idUtente = this.user!.id;
-      this.gs.createOrUpdate(missione).subscribe(res => {
-        this.us.user.next(res);
+      } else {
+        console.log('Durata del video troppo lunga, il video deve essere massimo di 30 secondi, modificalo oppure registrane uno nuovo!')
+        this.errors.videoBrindisi = 'Durata del video troppo lunga, il video deve essere massimo di 30 secondi, modificalo oppure registrane uno nuovo!';
         this.spinnerService.requestEndedApi();
-      });
-    }
+      }
 
+    } catch (e) {
+      this.spinnerService.requestEndedApi();
+    }
   }
 
+  zoomImage(image: string | null) {
+    this.showImageFullScreen = image;
+  }
+
+  onMetadata(e: Event, video: any) {
+    console.log('metadata: ', e);
+    console.log('duration: ', this.videoDuration = video.duration);
+  }
+
+  checkCompleteMission(): boolean {
+    return this.checkValue(this.user?.mission?.parolaCruciverba) && this.checkValue(this.user?.mission?.selfieSposa)
+    && this.checkValue(this.user?.mission?.selfieSposo) && this.checkValue(this.user?.mission?.videoBrindisi)
+    && this.checkValue(this.user?.mission?.parolaJenga) && this.checkValue(this.user?.mission?.indovinello);
+  }
 }

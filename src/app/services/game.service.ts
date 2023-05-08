@@ -1,14 +1,17 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from "../../environments/environment";
 import {map} from "rxjs/operators";
 import {IMission} from "../interfaces/IMission";
+import {IUser} from "../interfaces/IUser";
+import {IImage} from "../interfaces/IImage";
 
 @Injectable({
   providedIn: 'root',
 })
 export class GameService {
+  public images: BehaviorSubject<IImage[]> = new BehaviorSubject<IImage[]>([]);
 
   constructor(private http: HttpClient) {
   }
@@ -63,6 +66,11 @@ export class GameService {
     if (video)
       formData.append('video', video);
     return this.http.post(myLink, formData, {responseType: 'json'});
+  }
+
+  getImages() {
+    const myLink = environment.urlApi + environment.IMAGE_GET_ALL;
+    return this.http.get<any>(myLink);
   }
 }
 

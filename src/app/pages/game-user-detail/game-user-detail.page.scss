@@ -40,9 +40,21 @@ ion-checkbox::part(container) {
 }
 
 .image-product-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+.image-product-item::part(image) {
+  border-radius: 15px !important;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  background: white;
   object-fit: cover;
-  max-width: 148px !important;
-  max-height: 148px !important;
 }
 
 .button-x {
@@ -63,8 +75,8 @@ ion-checkbox::part(container) {
   aspect-ratio: 1;
   background: white;
   object-fit: cover;
-  width: 200px !important;
-  height: 200px !important;
+  width: 250px !important;
+  height: 250px !important;
   position: relative;
 }
 
@@ -79,12 +91,23 @@ ion-checkbox::part(container) {
   aspect-ratio: 1;
   background: white;
   object-fit: cover;
-  width: 200px !important;
+  width: 250px !important;
   height: auto !important;
   position: relative;
 }
 
 .video-item {
-  max-width: 188px !important;
+  max-width: 230px !important;
   height: auto !important;
+}
+
+.centerFullImage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+  margin: auto;
+  width: 90%;
 }
